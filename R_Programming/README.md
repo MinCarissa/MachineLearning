@@ -1,1 +1,1 @@
-This is the folder to R programming
+This is the folder for R programming
