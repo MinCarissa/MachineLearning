@@ -53,7 +53,6 @@ names(Carseats)
 summary(Carseats)
 fit1 = lm(Sales~.+Income:Advertising+Age:Price, data = Carseats)
 summary(fit1)
-abline(fit1, col ="red")
 
 #remember: as.factor() change qualitative variables into "factor" (quantitative variables), if the original variables are 
 # not "factors", we must do it manually before constructing a model
