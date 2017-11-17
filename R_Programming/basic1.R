@@ -62,7 +62,7 @@ sqrt(var(x)) # = sd(x)
 
 
 # Graphics
-# plot() function
+# plot() function, produce scatterplots of the "quantitative" variables
 x = rnorm(100)
 y = rnorm(100)
 plot(x, y, xlab="x-axis", ylab="y-axis", main="plot x-y") # parameters: x, y, xlab="", ylab="", main="", col=""
@@ -94,5 +94,115 @@ persp(x, y, fa)
 persp(x, y, fa, theta=30) # theta: angles defining the viewing direction
 persp(x, y, fa, theta=30, phi=20)  # theta and phi control the angles at which the plot is viewed
 
+#Loading data
+getwd()
+?read.table
+Auto = read.table("Auto.data") # Reads a file in table format and creates a data frame from it
+fix(Auto) # view the file in a spreadsheet like window, it is useful to view a data set using a text edit
+?fix
+
+Auto = read.table("Auto.data", header=T, na.string = "?") # more parameters: header = , na.string =  
+fix(Auto) 
+
+Auto = read.csv("Auto.csv", header=T, na.string = "?") # read a excel-format data
+fix(Auto)
+dim(Auto)
+Auto = na.omit(Auto) # using na.omit() function to remove rows containing missing observations
+dim(Auto)
+names(Auto) # names() function to check the variable names
 
 
+#Additional graphical and numerical summaries
+plot(Auto$cylinders, Auto$mpg)
+attach(Auto)
+plot(cylinders, mpg)
+summary(Auto)
+cylinders = as.factor(cylinders) #as.factor() converts "quantitative" variables into "qualitative" variables
+                                 # categorial variable plotted on the x-axis, then using plot() function will produce boxplots
+?plot # no need data file as a parameter
+plot(cylinders, mpg, col="red")
+plot(cylinders, mpg, col="red", varwidth=T)
+plot(cylinders, mpg, col="red", varwidth=T, horizontal=T) #horizontal= ,  x-axis(y-axis) becomes y-axis(x-axis)
+plot(cylinders, mpg, col="red", varwidth=T, horizontal=T, xlab="X", ylab="Y")
+
+#hist() function can be used to plot a histgram
+?hist # no need data file as a parameter
+hist(mpg) # contains only one variable
+hist(mpg, col=2) # col= 2 equals col="red"
+hist(mpg, col=2, breaks=15) # breaks shows the breakpoints between histogram cells
+
+#pairs() produce a scatterplot matrix, i.e. a scatterplot for every pair of variables for any given data set
+pairs(Auto) # Auto data parameter is not necessar
+pairs(~ mpg + displacement, Auto)
+
+# identify() function in conjunction with plot() function, to see printed value for x-axis and y-axis
+plot(horsepower, mpg)
+identify(horsepower, mpg, name) # display "name" values for horsepower(x-axis) and mpg(y-axis)
+summary(Auto)
+summary(mpg)
+
+
+#Applied
+#load College.csv 
+college = read.csv("College.csv")
+fix(college) # display in a separate editor
+
+# add a row.names column as the first non data column in the data
+rownames(college) = college[,1] #college data add a column (1st column) called row.names with names of each university
+                               # R will not perform calculations on the row names, because it is not a "data column"
+fix(college)
+college = college[,-1] # remove the original 1st data column (university name), not the current 1st column  (row.name)
+fix(college) 
+summary(college)
+
+# display scatterplot matrix
+pairs(college)
+pairs(college[,1:10], college)
+pairs(~Apps+Accept+Enroll, college) # equals pairs(Apps~Accept+Enroll, college)
+
+#display boxplot
+attach(college)
+plot(Private, Outstate)
+
+#create  a categorical varialble "Elite"
+?rep
+nrow(college)
+Elite = rep("No", nrow(college)) # create a vector, replicates the elements "No", nrow(college) time
+Elite[college$Top10perc>50]="Yes" # dividing unversities into two groups, based on top 10% classes exceed 50% or not 
+Elite = as.factor(Elite) # quantitative variable turned into qualitative variable
+?data.frame # creates data frames, tightly couple collections of variables
+college = data.frame(college, Elite)
+fix(college)
+summary(college)
+plot(Elite, Outstate)
+
+par(mfrow=c(2,2)) # devide the print window into 2*2 regions, so that 4 plots can be made simultaneously
+?par
+hist(Outstate)
+hist(Terminal)
+hist(PhD)
+hist(Expend)
+hist(Personal)
+
+par(mfrow=c(3,2)) # devide the print window into 3*2 regions, so that 6 plots can be made simultaneously
+hist(Outstate)
+hist(Terminal)
+hist(PhD)
+hist(Expend)
+hist(Personal)
+
+summary(Auto)
+range(mpg) # range() function display the minimum and maximum value of the quantitative variables
+           #range(name) will be error, since "name" is a qualitative variable
+dim(Auto)
+Auto = Auto[-c(10,85),]
+dim(Auto)
+Auto = Auto[-c(11:84),]
+dim(Auto)
+
+
+#Boston data set
+library(MASS)
+print(Boston)
+?Boston
+pairs(Boston)
