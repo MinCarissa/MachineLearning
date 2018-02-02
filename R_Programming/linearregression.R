@@ -1,5 +1,5 @@
 # Linear regression models
-install.packages("ISLR") # the package's name "car" has to be quoted
+install.packages("ISLR")
 ?install.packages
 library(MASS)
 library(ISLR)
@@ -57,31 +57,36 @@ summary(fit3)$r.sq # r square
 summary(fit3)$sigma # RSE
 
 ??vif
-install.packages("car") 
-library(car)
-vif(fit1)
+#install.packages("car") # the package 
+#library(car)
+#vif(fit1)
 
-
-
-fit4 = lm(medv~.-age-indus, data = Boston)
+fit4 = lm(medv~.-age-indus, data = Boston) # predictors exclude age and indus
 summary(fit4)
 
-#linear model with interaction effects
-fit5 = lm(medv~lstat*age, data = Boston) #using "lstat*age", three intercepts: lastat, age, lstat:age
+#(3)linear model with interaction effects
+fit5 = lm(medv~lstat*age, data = Boston) #using "lstat*age", three intercepts: lastat, age, lstat: (muliply) age
 summary(fit5)
 
 fit51 = lm(medv~lstat:age, data = Boston)  #using "lstat:age", only one interaction intercept: lstat:age
 summary(fit51)
 
-fit6 = lm(medv~lstat+I(lstat^2), data = Boston) #I(x) change the class of object x indicate that it should be treated 'as is'
+#(4) non-linear transformations of the predictors
+fit6 = lm(medv~lstat+I(lstat^2), data = Boston) # I(lstat^2) is square of lstat
 summary(fit6)
-?I
+fit8 = lm(medv~lstat, Boston)
+summary(fit8)
+anova(fit8, fit6) # anova (analysis of variance), check the two models fit the data equally well, since F value is 135, 
+# p-value is small, so fit6 is superior to model fit8
+par(mfrow=c(2,2))
+plot(fit6)
 
 fit7 = lm(medv~poly(lstat,2), data = Boston) # two intercepts: poly(lstat,2)1, poly(lstat,2)2. 
 #polynomials of degree 1 to degree over the specified set of points x
 summary(fit7)
 ?poly
 
+summary(lm(medv~log(rm), data=Boston))
 
 #linear model with multiple intercept
 ?Carseats
@@ -90,5 +95,15 @@ summary(Carseats)
 fit1 = lm(Sales~.+Income:Advertising+Age:Price, data = Carseats)
 summary(fit1)
 
+attach(Carseats)
+contrasts(ShelveLoc) # returns the coding for the dummy variables
 #remember: as.factor() change qualitative variables into "factor" (quantitative variables), if the original variables are 
 # not "factors", we must do it manually before constructing a model
+
+# Define function
+PrintNumbers = function(y){
+  i =1+y
+  print(i)
+}
+PrintNumbers # display what the function is
+PrintNumbers(3) # call the functions
