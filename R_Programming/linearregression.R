@@ -76,17 +76,16 @@ fit6 = lm(medv~lstat+I(lstat^2), data = Boston) # I(lstat^2) is square of lstat
 summary(fit6)
 fit8 = lm(medv~lstat, Boston)
 summary(fit8)
-anova(fit8, fit6) # anova (analysis of variance), check the two models fit the data equally well, since F value is 135, 
-<<<<<<< HEAD
-                  # p-value is small, so fit6 is superior to model fit8
-=======
+
+# anova (analysis of variance), check the two models fit the data equally well, since F value is 135, 
 # p-value is small, so fit6 is superior to model fit8
->>>>>>> 137544acdcd272a5e10cca2e9eced4e3ff43806e
+anova(fit8, fit6) 
+
 par(mfrow=c(2,2))
 plot(fit6)
 
 fit7 = lm(medv~poly(lstat,2), data = Boston) # two intercepts: poly(lstat,2)1, poly(lstat,2)2. 
-#polynomials of degree 1 to degree over the specified set of points x
+                                             #polynomials of degree 1 to degree over the specified set of points x
 summary(fit7)
 ?poly
 
