@@ -32,6 +32,7 @@ train=(Year<2005) # a boolean vector of 1,250 elements, <2005 is true, otherwise
 Smarket.2005=Smarket[!train,] # a submatrix of the data  in 2005, !train reverse the elements in train
 dim(Smarket.2005)
 Direction.2005=Direction[!train]
+length(Direction.2005)
 
 #Using "subset" argument to build a model on date before 2005, and test model on the days in 2005
 glm.fit=glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data=Smarket, family=binomial, subset=train)
@@ -55,5 +56,31 @@ mean(glm.pred==Direction.2005)
 predict(glm.fit, newdata=data.frame(Lag1=c(1.2,1.5), Lag2=c(1.1,-0.8)), type="response")
 
 
-#3. Linear discriminant analysis
+#3. Linear discriminant analysis (LDA)
+library(MASS) # lda() function is part of MASS library, we fit a LDA model using the lda() function
+train1=Smarket$Year<2005
+train1
+lda.fit=lda(Direction~Lag1+Lag2, data=Smarket, subset=train1) 
+lda.fit
+#lda() function is similar to lm() and glm() except for the absenct of family option
+lda.pred=predict(lda.fit, Smarket.2005)
+names(lda.pred)
+dim(lda.pred$posterior)
+lda.class=lda.pred$class
+lda.pred$x
+table(lda.class, Direction.2005)
+mean(lda.class==Direction.2005)
+sum(lda.pred$posterior[,1]>=.5)
+lda.pred$posterior[1:20,1]
+lda.class[1:20]
+sum(lda.pred$posterior[,1]>.9)
+
+#Quadratic Discriminant analysis (QDA)
+qda.fit=qda(Direction~Lag1+Lag2, data=Smarket, subset=train) #qda() similiar to lda()
+qda.fit
+qda.class=predict(qda.fit, Smarket.2005)$class
+table(qda.class, Direction.2005)
+mean(qda.class==Direction.2005)
+
+#4. K-Nearest neighbors (KNN)
 
