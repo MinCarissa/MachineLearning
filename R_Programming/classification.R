@@ -29,6 +29,7 @@ table(glm.pred, Direction) # it creates a confusion matrix
 mean(glm.pred == Direction) # it compute the fraction of days for which the prediction was correct
 
 train=(Year<2005) # a boolean vector of 1,250 elements, <2005 is true, otherwise falise
+# boolean vectors can be used to produce a subset of rows or columns of a matrix
 Smarket.2005=Smarket[!train,] # a submatrix of the data  in 2005, !train reverse the elements in train
 dim(Smarket.2005)
 Direction.2005=Direction[!train]
@@ -83,4 +84,65 @@ table(qda.class, Direction.2005)
 mean(qda.class==Direction.2005)
 
 #4. K-Nearest neighbors (KNN)
+library(class) #knn() is part of class library
 
+#knn() requires four inputs
+train.X=cbind(Lag1,Lag2)[train,] #cbind() column bind into matrix
+dim(train.X)
+test.X=cbind(Lag1,Lag2)[!train,]
+dim(test.X)
+train.Direction=Direction[train]
+set.seed(1)
+knn.pred=knn(train.X, test.X, train.Direction, k=1)
+table(knn.pred, Direction.2005)
+(83+43)/252
+
+knn.pred=knn(train.X, test.X, train.Direction, k=3)
+table(knn.pred, Direction.2005)
+mean(knn.pred==Direction.2005)
+
+# An application to Caravan insurance data (applying KNN approach)
+dim(Caravan)
+attach(Caravan)
+summary(Purchase)
+348/5822 #Only 6% of people purchased caravan insurance
+
+standardized.X=scale(Caravan[,-86]) #scale() to standardize the data set, such that 
+                                    #all variables has a standard deviation of one and a mean of zero
+var(Caravan[,1])
+var(Caravan[,2])
+var(standardized.X[,1])
+var(standardized.X[,2])
+
+test=1:1000
+train.X=standardized.X[-test,]
+test.X=standardized.X[test,]
+train.Y=Purchase[-test]
+test.Y=Purchase[test]
+set.seed(1)
+knn.pred=knn(train.X, test.X, train.Y, k=1)
+mean(test.Y!=knn.pred)
+mean(test.Y!="No")
+table(knn.pred,test.Y)
+9/(68+9) # The fraction of individuals that are correctly predicted to buy insurance is of interest
+
+knn.pred=knn(train.X, test.X, train.Y, k=3)
+table(knn.pred,test.Y)
+5/26
+
+knn.pred=knn(train.X, test.X, train.Y, k=5)
+table(knn.pred,test.Y)
+4/15
+
+
+#Fit a logistic regression model to the data
+glm.fit=glm(Purchase~., data=Caravan, family=binomial, subset=-test)
+glm.probs=predict(glm.fit, Caravan[test,], type="response")
+glm.pred=rep("No", 1000)
+glm.pred[glm.probs>.5]="Yes"
+table(glm.pred,test.Y)
+
+glm.pred=rep("No", 1000)
+glm.pred[glm.probs>.25]="Yes"
+table(glm.pred,test.Y)
+11/(22+11)
