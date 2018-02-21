@@ -56,3 +56,23 @@ coef(regfit.fwd, 7)
 coef(regfit.bwd, 7)
 
 # Choosing amony models using the validation set approach and cross-validation
+set.seed(1)
+train=sample(c(TRUE, FALSE), nrow(Hitters), rep=TRUE)
+?sample
+test=(!train)
+
+#apply to training set
+regfit.best=regsubsets(Salary~., data=Hitters[train,], nvmax=19)
+test.mat=model.matrix(Salary~., data=Hitters[test,])
+fix(test.mat)
+val.errors=rep(NA,19)
+for(i in 1:19){
+  coefi=coef(regfit.best, id=i)
+  pred=test.mat[,names(coefi)]%*%coefi    # %*% is for matrix multiplication, only choose the column showing in coefi
+  val.errors[i]=mean((Hitters$Salary[test]-pred)^2)
+}
+val.errors
+which.min(val.errors)
+coef(regfit.best, 10)
+
+# define our own predict() function
