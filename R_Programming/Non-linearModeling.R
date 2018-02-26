@@ -89,3 +89,4 @@ fit = lm(wage~cut(age, 4), data=Wage)
 coef(summary(fit))
 
 #splines
+library(aplines)
